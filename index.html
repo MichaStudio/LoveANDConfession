@@ -50,11 +50,11 @@
             position: absolute;
             width: 50px;
             height: 50px;
-            animation: floatDown 3s ease-in-out infinite; /* Changed to float down */
+            animation: floatDown 3s ease-in-out infinite; /* Floats down */
         }
         @keyframes floatDown {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(20px); } /* Floats down instead of up */
+            50% { transform: translateY(20px); }
         }
         .present {
             width: 200px;
@@ -97,7 +97,7 @@
         .letter {
             display: none;
             width: 200px;
-            height: 200px;
+            min-height: 200px; /* Minimum height */
             margin: 20px auto;
             background-color: #fff; /* White background */
             border: 2px solid #ff69b4;
@@ -108,7 +108,8 @@
             font-family: 'Courier New', monospace; /* Letter-like font */
             text-align: left;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            overflow: hidden; /* To contain the fold effect */
+            overflow-y: auto; /* Scroll if content overflows */
+            max-height: 400px; /* Max height to prevent it from being too tall */
         }
         .letter::before {
             content: '';
@@ -165,7 +166,7 @@
                 width: 30px;
                 height: 30px;
             }
-            .present, .letter {
+            .present {
                 width: 150px;
                 height: 150px;
             }
@@ -178,6 +179,11 @@
             .present-heart, .letter-heart {
                 width: 30px;
                 height: 30px;
+            }
+            .letter {
+                width: 150px;
+                min-height: 150px;
+                max-height: 300px;
             }
             button {
                 font-size: 14px;
@@ -192,7 +198,7 @@
                 width: 25px;
                 height: 25px;
             }
-            .present, .letter {
+            .present {
                 width: 120px;
                 height: 120px;
             }
@@ -205,6 +211,11 @@
             .present-heart, .letter-heart {
                 width: 25px;
                 height: 25px;
+            }
+            .letter {
+                width: 120px;
+                min-height: 120px;
+                max-height: 250px;
             }
             h1 {
                 font-size: 24px;
@@ -279,32 +290,50 @@
         // Leave as '' to auto-detect. For production, set to your full URL like 'https://yourusername.github.io/repo/confession.html'
         const baseUrl = '';  // Example: 'https://example.com/confession.html'
 
+        const fromInput = document.getElementById('from');
+        const toInput = document.getElementById('to');
+        const messageInput = document.getElementById('message');
+        const shareLinkInput = document.getElementById('shareLink');
+        const messagesLink = document.getElementById('messagesLink');
+        const resultDiv = document.getElementById('result');
+
+        function generateLink() {
+            const from = fromInput.value.trim();
+            const to = toInput.value.trim();
+            const message = messageInput.value.trim();
+            if (from && to && message) {
+                const data = btoa(JSON.stringify({ from, to, message }));
+                const currentUrl = baseUrl || window.location.href.split('#')[0];
+                const link = currentUrl + '#' + data;
+                shareLinkInput.value = link;
+                messagesLink.href = `sms:?body=Check out this love confession: ${encodeURIComponent(link)}`;
+                resultDiv.style.display = 'block';
+            } else {
+                resultDiv.style.display = 'none';
+            }
+        }
+
+        // Generate link on input change
+        fromInput.addEventListener('input', generateLink);
+        toInput.addEventListener('input', generateLink);
+        messageInput.addEventListener('input', generateLink);
+
         document.getElementById('confessionForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const from = document.getElementById('from').value;
-            const to = document.getElementById('to').value;
-            const message = document.getElementById('message').value;
-            
-            // Encode data in URL hash
-            const data = btoa(JSON.stringify({ from, to, message }));
-            const currentUrl = baseUrl || window.location.href.split('#')[0];
-            const link = currentUrl + '#' + data;
-            
-            document.getElementById('shareLink').value = link;
-            document.getElementById('messagesLink').href = `sms:?body=Check out this love confession: ${encodeURIComponent(link)}`;
-            document.getElementById('result').style.display = 'block';
+            generateLink();  // Ensure it's generated on submit as well
         });
 
         document.getElementById('copyLink').addEventListener('click', function() {
-            const link = document.getElementById('shareLink');
-            link.select();
+            shareLinkInput.select();
             document.execCommand('copy');
             alert('Link copied to clipboard!');
         });
 
         document.getElementById('viewConfession').addEventListener('click', function() {
-            const link = document.getElementById('shareLink').value;
-            window.open(link, '_blank');  // Opens the confession link in a new tab/window
+            const link = shareLinkInput.value;
+            if (link) {
+                window.open(link, '_blank');
+            }
         });
 
         // Check if there's data in URL hash (for viewing)
@@ -326,12 +355,18 @@
                             <div style="border-bottom: 1px solid #ff69b4; padding-bottom: 10px; margin-bottom: 10px;">
                                 <strong>Dear ${data.to},</strong>
                             </div>
-                            <p>${data.message}</p>
+                            <p>${data.message.replace(/\n/g, '<br>')}</p>
                             <div style="text-align: right; margin-top: 20px;">
                                 <em>With love,<br>${data.from}</em>
                             </div>
                         `;
                         letterDiv.classList.add('show');
+                        // Dynamically adjust height based on content
+                        const contentHeight = letterContent.scrollHeight + 80; // Add padding
+                        letterDiv.style.height = Math.min(contentHeight, 400) + 'px'; // Cap at max-height
+                        if (contentHeight > 400) {
+                            letterDiv.style.overflowY = 'auto';
+                        }
                         setTimeout(() => {
                             messageDiv.innerHTML = `<p>💌 A heartfelt confession just for you!</p>`;
                             messageDiv.classList.add('show');
