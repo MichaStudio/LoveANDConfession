@@ -126,15 +126,6 @@
             z-index: 1;
             padding-top: 40px; /* Space for the fold */
         }
-        .letter-heart {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            z-index: 2;
-        }
         .letter.show {
             display: block;
         }
@@ -176,7 +167,7 @@
             .box {
                 height: 112.5px;
             }
-            .present-heart, .letter-heart {
+            .present-heart {
                 width: 30px;
                 height: 30px;
             }
@@ -208,7 +199,7 @@
             .box {
                 height: 90px;
             }
-            .present-heart, .letter-heart {
+            .present-heart {
                 width: 25px;
                 height: 25px;
             }
@@ -265,7 +256,6 @@
                 <img src="heart2.png" class="present-heart" alt="Heart on Present">
             </div>
             <div class="letter" id="loveLetter">
-                <img src="heart.png" class="letter-heart" alt="Heart">
                 <div class="letter-content">
                     <!-- Content will be inserted here -->
                 </div>
@@ -389,3 +379,4 @@
     </script>
 </body>
 </html>
+
