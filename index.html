@@ -240,7 +240,7 @@
             <input type="text" id="shareLink" readonly>
             <button id="copyLink">Copy Link</button>
             <button id="viewConfession">View Confession</button>
-            <a id="messagesLink" href="#" target="_blank"><button>Go to Messages</button></a>
+            <button id="createAnother">Create Another</button>
         </div>
     </div>
 
@@ -294,7 +294,6 @@
         const toInput = document.getElementById('to');
         const messageInput = document.getElementById('message');
         const shareLinkInput = document.getElementById('shareLink');
-        const messagesLink = document.getElementById('messagesLink');
         const resultDiv = document.getElementById('result');
 
         function generateLink() {
@@ -306,7 +305,6 @@
                 const currentUrl = baseUrl || window.location.href.split('#')[0];
                 const link = currentUrl + '#' + data;
                 shareLinkInput.value = link;
-                messagesLink.href = `sms:?body=Check out this love confession: ${encodeURIComponent(link)}`;
                 resultDiv.style.display = 'block';
             } else {
                 resultDiv.style.display = 'none';
@@ -334,6 +332,17 @@
             if (link) {
                 window.open(link, '_blank');
             }
+        });
+
+        document.getElementById('createAnother').addEventListener('click', function() {
+            // Clear inputs
+            fromInput.value = '';
+            toInput.value = '';
+            messageInput.value = '';
+            // Hide result
+            resultDiv.style.display = 'none';
+            // Refresh the page
+            window.location.reload();
         });
 
         // Check if there's data in URL hash (for viewing)
