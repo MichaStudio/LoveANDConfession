@@ -33,6 +33,9 @@
             border-radius: 5px;
             box-sizing: border-box;
         }
+        textarea {
+            resize: none; /* Disable resizing */
+        }
         button {
             background-color: #ff69b4;
             color: white;
@@ -96,7 +99,7 @@
         }
         .letter {
             display: none;
-            width: 200px; /* Default width, will be overridden dynamically */
+            width: auto; /* Allow automatic width based on content */
             min-height: 200px; /* Minimum height */
             margin: 20px auto;
             background-color: #fff; /* White background */
@@ -171,7 +174,6 @@
                 height: 30px;
             }
             .letter {
-                width: 150px; /* Default for mobile, will be overridden dynamically */
                 min-height: 150px;
             }
             button {
@@ -202,7 +204,6 @@
                 height: 25px;
             }
             .letter {
-                width: 120px; /* Default for small mobile, will be overridden dynamically */
                 min-height: 120px;
             }
             h1 {
@@ -357,41 +358,27 @@
                             </div>
                         `;
                         
-                        // Temporarily show to measure dimensions
+                        // Temporarily set to allow full expansion for measurement
                         letterDiv.style.display = 'block';
+                        letterDiv.style.width = '9999px';
+                        letterContent.style.whiteSpace = 'nowrap'; // Prevent wrapping to measure full width
                         letterDiv.style.visibility = 'hidden';
                         
-                        // Calculate dynamic width and height
+                        // Measure natural dimensions
                         const contentWidth = letterContent.scrollWidth;
                         const contentHeight = letterContent.scrollHeight;
                         
-                        // Determine max dimensions based on screen size
-                        let maxWidth, maxHeight;
-                        if (window.innerWidth <= 480) {
-                            maxWidth = 120;
-                            maxHeight = 400;
-                        } else if (window.innerWidth <= 768) {
-                            maxWidth = 150;
-                            maxHeight = 500;
-                        } else {
-                            maxWidth = 200;
-                            maxHeight = 600;
-                        }
+                        // Reset whiteSpace
+                        letterContent.style.whiteSpace = '';
                         
-                        // Set dynamic width (accounting for padding)
+                        // Set dynamic width and height based on text quantity (no caps)
                         const paddingWidth = 40; // 20px left + 20px right
-                        letterDiv.style.width = Math.max(100, Math.min(contentWidth + paddingWidth, maxWidth)) + 'px';
+                        letterDiv.style.width = (contentWidth + paddingWidth) + 'px';
                         
-                        // Set dynamic height (accounting for padding and fold)
                         const paddingHeight = 80; // Approximate for top padding, fold, etc.
                         const calculatedHeight = contentHeight + paddingHeight;
-                        if (calculatedHeight > maxHeight) {
-                            letterDiv.style.height = maxHeight + 'px';
-                            letterDiv.style.overflowY = 'auto';
-                        } else {
-                            letterDiv.style.height = calculatedHeight + 'px';
-                            letterDiv.style.overflowY = 'visible';
-                        }
+                        letterDiv.style.height = calculatedHeight + 'px';
+                        letterDiv.style.overflowY = 'visible'; // No scrolling, let it be as tall as needed
                         
                         // Now show the letter
                         letterDiv.style.visibility = 'visible';
