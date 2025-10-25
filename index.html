@@ -99,7 +99,7 @@
         }
         .letter {
             display: none;
-            width: auto; /* Allow automatic width based on content */
+            width: 100%; /* Match the textarea width */
             min-height: 200px; /* Minimum height */
             margin: 20px auto;
             background-color: #fff; /* White background */
@@ -358,23 +358,14 @@
                             </div>
                         `;
                         
-                        // Temporarily set to allow full expansion for measurement
+                        // Temporarily show to measure height (width is fixed to 100% like textarea)
                         letterDiv.style.display = 'block';
-                        letterDiv.style.width = '9999px';
-                        letterContent.style.whiteSpace = 'nowrap'; // Prevent wrapping to measure full width
                         letterDiv.style.visibility = 'hidden';
                         
-                        // Measure natural dimensions
-                        const contentWidth = letterContent.scrollWidth;
+                        // Measure content height
                         const contentHeight = letterContent.scrollHeight;
                         
-                        // Reset whiteSpace
-                        letterContent.style.whiteSpace = '';
-                        
-                        // Set dynamic width and height based on text quantity (no caps)
-                        const paddingWidth = 40; // 20px left + 20px right
-                        letterDiv.style.width = (contentWidth + paddingWidth) + 'px';
-                        
+                        // Set dynamic height based on text quantity
                         const paddingHeight = 80; // Approximate for top padding, fold, etc.
                         const calculatedHeight = contentHeight + paddingHeight;
                         letterDiv.style.height = calculatedHeight + 'px';
@@ -397,3 +388,5 @@
     </script>
 </body>
 </html>
+
+
