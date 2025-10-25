@@ -100,7 +100,9 @@
         .letter {
             display: none;
             width: 100%; /* Match the textarea width */
+            max-width: 500px; /* Limit width so it doesn't go too far to the side */
             min-height: 200px; /* Minimum height */
+            max-height: 600px; /* Limit height, scroll if exceeded */
             margin: 20px auto;
             background-color: #fff; /* White background */
             border: 2px solid #ff69b4;
@@ -111,7 +113,7 @@
             font-family: 'Courier New', monospace; /* Letter-like font */
             text-align: left;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            /* Removed fixed max-height and overflow-y to allow dynamic sizing */
+            overflow-y: auto; /* Enable scrolling if content exceeds max-height */
         }
         .letter::before {
             content: '';
@@ -174,7 +176,9 @@
                 height: 30px;
             }
             .letter {
+                max-width: 400px; /* Smaller limit on mobile */
                 min-height: 150px;
+                max-height: 500px;
             }
             button {
                 font-size: 14px;
@@ -204,7 +208,9 @@
                 height: 25px;
             }
             .letter {
+                max-width: 300px; /* Even smaller on very small screens */
                 min-height: 120px;
+                max-height: 400px;
             }
             h1 {
                 font-size: 24px;
@@ -358,18 +364,24 @@
                             </div>
                         `;
                         
-                        // Temporarily show to measure height (width is fixed to 100% like textarea)
+                        // Temporarily show to measure height (width is limited by CSS max-width)
                         letterDiv.style.display = 'block';
                         letterDiv.style.visibility = 'hidden';
                         
                         // Measure content height
                         const contentHeight = letterContent.scrollHeight;
                         
-                        // Set dynamic height based on text quantity
+                        // Set dynamic height based on text quantity, with limit
                         const paddingHeight = 80; // Approximate for top padding, fold, etc.
                         const calculatedHeight = contentHeight + paddingHeight;
-                        letterDiv.style.height = calculatedHeight + 'px';
-                        letterDiv.style.overflowY = 'visible'; // No scrolling, let it be as tall as needed
+                        const maxHeight = parseInt(getComputedStyle(letterDiv).maxHeight); // Get CSS max-height
+                        if (calculatedHeight > maxHeight) {
+                            letterDiv.style.height = maxHeight + 'px';
+                            // overflow-y is already set to auto in CSS
+                        } else {
+                            letterDiv.style.height = calculatedHeight + 'px';
+                            letterDiv.style.overflowY = 'visible';
+                        }
                         
                         // Now show the letter
                         letterDiv.style.visibility = 'visible';
@@ -388,5 +400,3 @@
     </script>
 </body>
 </html>
-
-
