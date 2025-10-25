@@ -99,8 +99,7 @@
         }
         .letter {
             display: none;
-            width: 100%; /* Match the textarea width */
-            max-width: 500px; /* Limit width so it doesn't go too far to the side */
+            width: 500px; /* Fixed width to limit expansion to the side */
             min-height: 200px; /* Minimum height */
             max-height: 600px; /* Limit height, scroll if exceeded */
             margin: 20px auto;
@@ -176,7 +175,7 @@
                 height: 30px;
             }
             .letter {
-                max-width: 400px; /* Smaller limit on mobile */
+                width: 400px; /* Smaller fixed width on mobile */
                 min-height: 150px;
                 max-height: 500px;
             }
@@ -208,7 +207,7 @@
                 height: 25px;
             }
             .letter {
-                max-width: 300px; /* Even smaller on very small screens */
+                width: 300px; /* Even smaller on very small screens */
                 min-height: 120px;
                 max-height: 400px;
             }
@@ -364,7 +363,7 @@
                             </div>
                         `;
                         
-                        // Temporarily show to measure height (width is limited by CSS max-width)
+                        // Temporarily show to measure height (width is fixed in CSS)
                         letterDiv.style.display = 'block';
                         letterDiv.style.visibility = 'hidden';
                         
