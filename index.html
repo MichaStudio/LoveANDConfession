@@ -96,7 +96,7 @@
         }
         .letter {
             display: none;
-            width: 200px;
+            width: 200px; /* Default width, will be overridden dynamically */
             min-height: 200px; /* Minimum height */
             margin: 20px auto;
             background-color: #fff; /* White background */
@@ -108,8 +108,7 @@
             font-family: 'Courier New', monospace; /* Letter-like font */
             text-align: left;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            overflow-y: auto; /* Scroll if content overflows */
-            max-height: 400px; /* Max height to prevent it from being too tall */
+            /* Removed fixed max-height and overflow-y to allow dynamic sizing */
         }
         .letter::before {
             content: '';
@@ -172,9 +171,8 @@
                 height: 30px;
             }
             .letter {
-                width: 150px;
+                width: 150px; /* Default for mobile, will be overridden dynamically */
                 min-height: 150px;
-                max-height: 300px;
             }
             button {
                 font-size: 14px;
@@ -204,9 +202,8 @@
                 height: 25px;
             }
             .letter {
-                width: 120px;
+                width: 120px; /* Default for small mobile, will be overridden dynamically */
                 min-height: 120px;
-                max-height: 250px;
             }
             h1 {
                 font-size: 24px;
@@ -359,13 +356,47 @@
                                 <em>With love,<br>${data.from}</em>
                             </div>
                         `;
-                        letterDiv.classList.add('show');
-                        // Dynamically adjust height based on content
-                        const contentHeight = letterContent.scrollHeight + 80; // Add padding
-                        letterDiv.style.height = Math.min(contentHeight, 400) + 'px'; // Cap at max-height
-                        if (contentHeight > 400) {
-                            letterDiv.style.overflowY = 'auto';
+                        
+                        // Temporarily show to measure dimensions
+                        letterDiv.style.display = 'block';
+                        letterDiv.style.visibility = 'hidden';
+                        
+                        // Calculate dynamic width and height
+                        const contentWidth = letterContent.scrollWidth;
+                        const contentHeight = letterContent.scrollHeight;
+                        
+                        // Determine max dimensions based on screen size
+                        let maxWidth, maxHeight;
+                        if (window.innerWidth <= 480) {
+                            maxWidth = 120;
+                            maxHeight = 400;
+                        } else if (window.innerWidth <= 768) {
+                            maxWidth = 150;
+                            maxHeight = 500;
+                        } else {
+                            maxWidth = 200;
+                            maxHeight = 600;
                         }
+                        
+                        // Set dynamic width (accounting for padding)
+                        const paddingWidth = 40; // 20px left + 20px right
+                        letterDiv.style.width = Math.max(100, Math.min(contentWidth + paddingWidth, maxWidth)) + 'px';
+                        
+                        // Set dynamic height (accounting for padding and fold)
+                        const paddingHeight = 80; // Approximate for top padding, fold, etc.
+                        const calculatedHeight = contentHeight + paddingHeight;
+                        if (calculatedHeight > maxHeight) {
+                            letterDiv.style.height = maxHeight + 'px';
+                            letterDiv.style.overflowY = 'auto';
+                        } else {
+                            letterDiv.style.height = calculatedHeight + 'px';
+                            letterDiv.style.overflowY = 'visible';
+                        }
+                        
+                        // Now show the letter
+                        letterDiv.style.visibility = 'visible';
+                        letterDiv.classList.add('show');
+                        
                         setTimeout(() => {
                             messageDiv.innerHTML = `<p>💌 A heartfelt confession just for you!</p>`;
                             messageDiv.classList.add('show');
